@@ -14,6 +14,10 @@ public:
     void load( int idxReg ,int val, Register&reg) {
         reg.setcell(idxReg,val);
     }
+  void store( int idxReg, int idxMem, Register& reg, Memory& mem) {
+        int value= reg.getcell(idxReg);
+        mem.setcell(idxMem,value);
+    }
 
 };
 
