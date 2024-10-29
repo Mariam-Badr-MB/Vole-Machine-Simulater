@@ -56,3 +56,17 @@ int Alu::hex_dec(const string &hex_number) {
     return decimal_value;
 }
 string Alu::dec_hex(int number) {
+    unordered_map<int, char> hexMap = {
+        {0, '0'}, {1, '1'}, {2, '2'}, {3, '3'}, {4, '4'}, {5, '5'},
+        {6, '6'}, {7, '7'}, {8, '8'}, {9, '9'}, {10, 'A'}, {11, 'B'},
+        {12, 'C'}, {13, 'D'}, {14, 'E'}, {15, 'F'}
+    };
+   string hex_number = "";
+    while (number > 0) {
+        int digit = number % 16;
+        hex_number = hexMap[digit] + hex_number;
+        number /= 16;
+    }
+
+    return hex_number.empty() ? "0" : hex_number;
+}
