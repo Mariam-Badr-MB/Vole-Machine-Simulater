@@ -5,18 +5,19 @@ using namespace std;
 #define CPU_H
 
 class CPU {
+private:
+    string fetch(Memory& mem);
+    void decode(const string& instruction, Memory& mem);
+
 public:
     int PC = 0;
-    string instructionRegister;
+    string IR = "";
     Register reg;
     ALU alu;
     CU cu;
 
     void runNextStep(Memory& mem);
     
-private:
-    string fetch(Memory& mem);
-    void decode(const string& instruction, Memory& mem);
 };
 
 #endif // CPU_H
