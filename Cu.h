@@ -25,6 +25,7 @@ public:
  void jump( int idxReg, int idxMem, Register&reg,int& PC){
 if(reg[idxReg] ==reg[0]){
     PC =idxMem;
+    
 }
 };
 void halt() {
