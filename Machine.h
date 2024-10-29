@@ -35,7 +35,7 @@ void Machine::loadProgramFile(const string& filename) {
 
 void Machine::outputState() const {
     cout << "CPU State:" << endl;
-    cout << "Program Counter: " << processor.programCounter << endl;
+    cout << "Program Counter: " << processor.PC << endl;
     
     for (int i = 0; i < REGISTER_SIZE; ++i) {
         cout << "R" << i << ": " << processor.reg.getCell(i) << endl;
