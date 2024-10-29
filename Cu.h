@@ -16,7 +16,8 @@ public:
     }
   void store( int idxReg, int idxMem, Register& reg, Memory& mem) {
         int value= reg.getcell(idxReg);
-        mem.setcell(idxMem,value);
+        string val = dec_hex(value);
+        mem.setcell(idxMem,val);
     }
  void move(int idxReg1 , int idxReg2, Register&reg){
       int value= reg.getcell(idxReg1);
