@@ -44,7 +44,7 @@ string Alu::hex_dec(const string &hex_number) {
         decimal_value += hexMap[toupper(digit)] * pow(16, power);
         --power;
     }
-    return to_string(decimal_value);
+    return decimal_value;
 }
 
 string Alu::dec_hex(int number) {
