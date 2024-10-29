@@ -31,9 +31,9 @@ string CPU::fetch(Memory& mem) {
 }
 
 void CPU::decode(const string& instruction, Memory& mem) {
-    int opcode = instruction[0] - '0';
-    int R = instruction[1] - '0';
-    int XY = stoi(instruction.substr(2, 2), nullptr, 16);
+        int opcode = alu.hex_dec(instruction.substr(0, 1));    
+        int R = alu.hex_dec(instruction.substr(1, 1));
+        int XY = alu.hex_dec(instruction.substr(2, 2));
 
     switch (opcode) {
         case 1:
