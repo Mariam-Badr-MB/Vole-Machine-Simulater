@@ -21,6 +21,9 @@ public:
     bool isValid(const string &hex_number);
 };
 
+#endif //Alu_H
+
+
 void Alu::add(int idx1, int idx2, int idx3, Register &reg) {
     reg.setCell(idx1, reg.getCell(idx2) + reg.getCell(idx3));
 }
@@ -50,6 +53,3 @@ string Alu::dec_hex(int number) {
     ss << hex << uppercase << number;
     return ss.str();
 }
-
-
-#endif //Alu_H
