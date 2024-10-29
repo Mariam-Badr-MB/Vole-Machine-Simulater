@@ -6,7 +6,7 @@ using namespace std;
 
 class CPU {
 public:
-    int programCounter = 0;
+    int PC = 0;
     string instructionRegister;
     Register reg;
     ALU alu;
@@ -27,7 +27,7 @@ void CPU::runNextStep(Memory& mem) {
 }
 
 string CPU::fetch(Memory& mem) {
-    return mem.getCell(programCounter++);
+    return mem.getCell(PC++);
 }
 
 void CPU::decode(const string& instruction, Memory& mem) {
@@ -52,7 +52,7 @@ void CPU::decode(const string& instruction, Memory& mem) {
             alu.add(R, instruction[2] - '0', instruction[3] - '0', reg);
             break;
         case 'B' - '0':
-            cu.jump(R, XY, reg, programCounter);
+            cu.jump(R, XY, reg, PC);
             break;
         case 'C' - '0':
             cu.halt();
