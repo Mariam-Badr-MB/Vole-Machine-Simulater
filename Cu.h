@@ -22,9 +22,10 @@ public:
       int value= reg.getcell(idxReg1);
      reg.setcell(idxReg2,value);
  }
- void jump( int idxReg, int idxMem, Register&reg, PC.int&){
-
-
+ void jump( int idxReg, int idxMem, Register&reg,int& PC){
+if(reg[idxReg] ==reg[0]){
+    PC =idxMem;
+}
 };
 void halt() {
     exit(0);
