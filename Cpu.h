@@ -11,7 +11,7 @@ private:
 
 public:
     int PC = 0;
-    string IR = "";
+    string instructionRegister ;
     Register reg;
     ALU alu;
     CU cu;
