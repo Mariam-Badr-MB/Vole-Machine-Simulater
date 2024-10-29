@@ -18,8 +18,17 @@ public:
         int value= reg.getcell(idxReg);
         mem.setcell(idxMem,value);
     }
+ void move(int idxReg1 , int idxReg2, Register&reg){
+      int value= reg.getcell(idxReg1);
+     reg.setcell(idxReg2,value);
+ }
+ void jump( int idxReg, int idxMem, Register&reg, PC.int&){
+
 
 };
+void halt() {
+    exit(0);
+}
 
 
 
