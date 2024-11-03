@@ -158,8 +158,8 @@ public:
             case 3: {
                 if(XY==0)
                     cout<<reg.getcell(R)<<"\n";
-                   else
                        cu.store(R, XY, reg, memory); break;
+
             }
             case 4: {
                 int R1=XY%10;
