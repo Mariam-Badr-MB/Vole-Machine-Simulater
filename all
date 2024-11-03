@@ -15,6 +15,7 @@ public:
         if (m < 0 || m >= MEMORY_SIZE) {
             throw out_of_range("Memory access out of bounds");
         }
+
         return data_M[m];
     }
 
@@ -22,6 +23,7 @@ public:
         if (m < 0 || m >= MEMORY_SIZE) {
             throw out_of_range("Memory access out of bounds");
         }
+
         data_M[m] = d;
     }
 };
