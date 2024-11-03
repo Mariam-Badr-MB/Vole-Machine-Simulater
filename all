@@ -113,6 +113,53 @@ string ALU::dec_hex(int number) {
     ss << hex << uppercase << number;
     return ss.str();
 }
+string dec_bin(int decimal) {
+    if (decimal == 0) return "0"; 
+
+    string binary = "";
+    while (decimal > 0) {
+        binary = to_string(decimal % 2) + binary; 
+        decimal /= 2; 
+    }
+
+    return binary;
+}
+string sub1( string& binary) {
+    string result = binary;
+    int len = result.length();
+
+    for (int i = len - 1; i >= 0; --i) {
+        if (result[i] == '1') {
+            result[i] = '0';
+            break;
+        } else {
+            result[i] = '1';
+        }
+    }
+
+    int firstOnePos = result.find('1');
+    if (firstOnePos != string::npos) {
+        result = result.substr(firstOnePos);
+    } else {
+        result = "0";
+    }
+
+    return result;
+}
+
+int bin_dec(string& binary) {
+    int decimal = 0;
+    int power = 0;
+
+    for (int i = binary.length() - 1; i >= 0; --i) {
+        if (binary[i] == '1') {
+            decimal += std::pow(2, power);
+        }
+        power++;
+    }
+
+    return decimal;
+}
 
 class CPU {
 protected:
