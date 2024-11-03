@@ -186,83 +186,73 @@ int bin_dec(string& binary) {
 
 class CPU {
 protected:
-  static int PC ;
-
-    string IR="";
-    Memory& memory; // Reference to Memory in Machine
+    static int PC;
+    string IR = "";
+    Memory& memory;
     Register& reg;
     ALU alu;
     CU cu;
+    Machine* machine;
 
 public:
     CPU(Memory& mem, Register& reg) : memory(mem), reg(reg) {}
+    friend void outputState(Machine& machine, CPU& cpu);
 
     void fetch() {
         IR.clear();
         IR = memory.getcell(PC) + memory.getcell(PC + 1);
-        cout<<memory.getcell(PC + 1)<<"\n";
         cout << "IR: " << IR << endl;
     }
 
     void decode() {
         int opcode = alu.hex_dec(IR.substr(0, 1));
         int R = alu.hex_dec(IR.substr(1, 1));
-        int XY=0 ;
-        if (opcode==4 || opcode==5 || opcode==6) {
-            XY =  alu.hex_dec(IR.substr(2, 1))*10;
-            cout << "XY: " << XY << endl;
-            XY+= alu.hex_dec(IR.substr(3, 1));
-            cout << "XY: " << XY << endl;
-        }
-        else
-          XY = alu.hex_dec(IR.substr(2, 2));
+        int XY = (opcode == 4 || opcode == 5 || opcode == 6)
+                 ? alu.hex_dec(IR.substr(2, 1)) * 10 + alu.hex_dec(IR.substr(3, 1))
+                 : alu.hex_dec(IR.substr(2, 2));
 
         execute(opcode, R, XY);
     }
-
-
-
 
     void execute(int opcode, int R, int XY) {
         switch (opcode) {
             case 1: cu.load(R, XY, reg, memory); break;
             case 2: cu.load(R, XY, reg); break;
-            case 3: {
-                if(XY==0)
-                    cout<<reg.getcell(R)<<"\n";
-                       cu.store(R, XY, reg, memory); break;
-
-            }
-            case 4: {
-                int R1=XY%10;
-                cout<<R1<<"\n";
-                XY/=10;
-                int R2=XY%100;
-                cout<<R2<<"\n";
-                cu.move(R1, R2, reg); break;
-            }
-            case 5: {
-                alu.add_Two_complement(R, (XY%10), ((XY/10)%10) , reg); break;
-            }
-            case 6: alu.add_Floating_point(R, (XY%10), ((XY/10)%10) , reg); break;
-            case 11: cu.jump(R, XY, reg, PC); break;
-            case 12: {
-              //  outputState();
+            case 3:
+                if (XY == 0) cout << reg.getcell(R) << "\n";
+                cu.store(R, XY, reg, memory); 
+                break;
+            case 4:
+                cu.move(XY % 10, XY / 10, reg);
+                break;
+            case 5:
+                alu.add_Two_complement(R, XY % 10, (XY / 10) % 10, reg);
+                break;
+            case 6:
+                alu.add_Floating_point(R, XY % 10, (XY / 10) % 10, reg);
+                break;
+            case 11:
+                cu.jump(R, XY, reg, PC);
+                break;
+            case 12:
+                outputState(*this->machine, *this);
                 cu.halt();
                 break;
-            }
-            default: cout << "Invalid instruction" << endl;
+            default:
+                cout << "Invalid instruction" << endl;
         }
     }
+
 
     void runNextStep() {
         fetch();
         decode();
         PC += 2;
     }
-friend void outputState();
 };
+
 int CPU::PC = 10;
+
 class Machine {
 public:
     Memory memory;
@@ -270,11 +260,35 @@ public:
     CPU cpu;
     ALU alu;
 
-
     Machine() : cpu(memory, reg) {}
 
+    void loadProgramFile(const string& filename);
+    void loadProgramIns(const string& instructions);
+    friend void outputState(Machine& machine, CPU& cpu);
+};
 
-void loadProgramFile(const string& filename) {
+void outputState(Machine &machine , CPU &cpu) {
+
+    cout << "Registers:" << endl << endl ;
+    for (int i = 0; i < REGISTER_SIZE; i++) {
+        cout << "R" << i << ": " << machine.reg.getcell(i) << " ";
+        if ((i + 1) % 16 == 0) {
+            cout << endl;
+        }
+    }
+    cout << endl;
+
+    cout << "Memory :" << endl << endl ;
+    for (int i = 0; i < MEMORY_SIZE; i++) {
+        cout << "M" << i << ": " << machine.memory.getcell(i) << " ";
+        if ((i + 1) % 16 == 0) {
+            cout << endl;
+        }
+    }
+    cout << endl;
+}
+
+void Machine::loadProgramFile(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Unable to open file");
@@ -296,8 +310,8 @@ void loadProgramFile(const string& filename) {
     file.close();
 
 }
-
-void loadProgramIns(const string& instructions)
+  
+void Machine::loadProgramIns(const string& instructions)
 {
 
     stringstream ss(instructions);
@@ -320,36 +334,10 @@ void loadProgramIns(const string& instructions)
     }
 }
 
-friend void outputState(Machine &machine);
-
-};
-void outputState(Machine &machine) {
-
-    cout << "Registers:" << endl << endl ;
-    for (int i = 0; i < REGISTER_SIZE; i++) {
-        cout << "R" << i << ": " << machine.reg.getcell(i) << " ";
-        if ((i + 1) % 16 == 0) {
-            cout << endl;
-        }
-    }
-    cout << endl;
-
-    cout << "Memory :" << endl << endl ;
-    for (int i = 0; i < MEMORY_SIZE; i++) {
-        cout << "M" << i << ": " << machine.memory.getcell(i) << " ";
-        if ((i + 1) % 16 == 0) {
-            cout << endl;
-        }
-    }
-    cout << endl;
-}
-
-
-class MainUI {
+class MainUI : public Machine{
 protected:
     Machine machine;
-    bool enterFileOrInstructions;
-    void loadProgramFile(const string& filename);
+    bool enterFileOrInstructions;  
 
 public:
     MainUI() : enterFileOrInstructions(false) {}
@@ -369,7 +357,7 @@ public:
                 inputInstruction();
                 break;
             case 'C':
-                outputState( machine);
+                outputState(machine , cpu);
                 break;
             case 'D':
                 cout << "Program Ended\n";
