@@ -5,7 +5,9 @@ const int REGISTER_SIZE = 16;
 const int MEMORY_SIZE = 256;
 class MainUI;
 class Machine;
-
+string dec_bin(int decimal) ;
+string sub1(string& binary);
+int bin_dec(string& binary);
 
 class Memory {
 protected:
@@ -83,7 +85,28 @@ public:
 };
 
 void ALU::add_Two_complement(int idx1, int idx2, int idx3, Register &reg) {
-    reg.setcell(idx1, reg.getcell(idx2) + reg.getcell(idx3));
+    
+     string S = dec_bin(reg.getcell(idx2)) ; 
+     string T = dec_bin(reg.getcell(idx3)) ;
+     string s = sub1(S);
+     string t = sub1(T);
+
+    for(int i = 0 ; i < s.size() ; i++){
+        if(s[i] == '0') s[i] = '1';
+        else s[i] = '0';
+     } 
+    for(int i = 0 ; i < t.size() ; i++){
+        if(t[i] == '0') t[i] = '1';
+        else t[i] = '0';
+     } 
+     int id1 = bin_dec(s);
+     if(S[0] == '1') id1 *= -1 ;
+     int id2 = bin_dec(t);
+     if(T[0] == '1') id2 *= -1 ;
+
+
+    int res = id1 + id2 ;
+    reg.setcell(idx1, res);
 }
 
 void ALU::add_Floating_point(int idx1, int idx2, int idx3, Register &reg) {
