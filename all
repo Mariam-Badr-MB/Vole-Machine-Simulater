@@ -145,11 +145,6 @@ public:
         else
           XY = alu.hex_dec(IR.substr(2, 2));
 
-        cout << "Decoded: Opcode: " << opcode << ", R: " << R << ", XY: " << XY << endl;
-
-        // Debug print to check if execute is recognizing opcode correctly
-        cout << "Executing with Opcode: " << opcode << ", Register: " << R << ", Memory/Value: " << XY << endl;
-
         execute(opcode, R, XY);
     }
 
@@ -176,7 +171,6 @@ public:
             }
             case 5: {
                 alu.add_Two_complement(R, (XY%10), ((XY/10)%10) , reg); break;
-                cout<<XY%10<<" "<<(XY/10)%10<<"\n";
             }
             case 6: alu.add_Floating_point(R, (XY%10), ((XY/10)%10) , reg); break;
             case 11: cu.jump(R, XY, reg, PC); break;
@@ -244,13 +238,11 @@ void loadProgramIns(const string& instructions)
     string instruction;
    static int address = 10;
     while (ss >> instruction && address < MEMORY_SIZE) {
-        cout<<"address1"<<" "<<address<<"\n";
+      
         memory.setcell(address, instruction.substr(0,2));
-        cout<<"first"<<" "<<memory.getcell(address)<<"\n";
-        cout<<"address2"<<" "<<address<<"\n";
+       
         address++;
         memory.setcell(address,instruction.substr(2,2));
-        cout<<"second"<<" "<<memory.getcell(address)<<"\n";
         address++;
         cpu.runNextStep();
     }
