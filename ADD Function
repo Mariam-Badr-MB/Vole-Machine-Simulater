@@ -1,0 +1,180 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int regSize = 16;
+const int memSize = 256;
+
+string dec_frac_bin(double num);
+double bin_frac_dec(const string& binary);
+string dec_bin(int decimal) ;
+int bin_dec(string& binary) ;
+string decBin(int decimal) ;
+
+class Memory {
+protected:
+    vector<string> data_M = vector<string>(memSize, "0");
+public:
+    const string& getcell(int m) const {
+        if (m < 0 || m >= memSize) {
+            throw out_of_range("Memory access out of bounds");
+        }
+
+        return data_M[m];
+    }
+
+    void setcell(int m, string d) {
+        if (m < 0 || m >= memSize) {
+            throw out_of_range("Memory access out of bounds");
+        }
+
+        data_M[m] = d;
+    }
+};
+
+class Register {
+protected:
+    vector<int> data_R = vector<int>(regSize, 0);
+public:
+    int getcell(int r) {
+        return data_R[r];
+    }
+    void setcell(int r, int d) {
+        data_R[r] = d;
+    }
+};
+
+class ALU {
+
+public:
+
+    void add_Two_complement(int idx1, int idx2, int idx3, Register &reg);
+    void add_Floating_point(int idx1, int idx2, int idx3, Register &reg); 
+
+};
+void ALU::add_Two_complement(int idx1, int idx2, int idx3, Register &reg) {
+    const int bits = 8;
+
+    int mask = (1 << bits) - 1;
+
+    int result = (reg.getcell(idx2) + reg.getcell(idx3)) & mask;
+
+    if (result & (1 << (bits - 1))) {
+        result -= (1 << bits); 
+    }
+
+    reg.setcell(idx1, result);
+
+}
+void ALU::add_Floating_point(int idx1, int idx2, int idx3, Register &reg) {
+    
+    string binRep1 = dec_bin(reg.getcell(idx2));
+    string binRep2 = dec_bin(reg.getcell(idx3));
+
+    int sign1 = binRep1[0] - '0';
+    int sign2 = binRep2[0] - '0';
+
+
+    int ex1 = bin_frac_dec(binRep1.substr(1, 3));
+    int ex2 = bin_frac_dec(binRep2.substr(1, 3));
+
+    
+    double M1 = bin_frac_dec("0." + binRep1.substr(4));
+    double M2 = bin_frac_dec("0." + binRep2.substr(4));
+
+
+    double num1 = pow(-1, sign1) * M1 * pow(2, ex1 - 4);
+    double num2 = pow(-1, sign2) * M2 * pow(2, ex2 - 4);
+
+    
+    double result = num1 + num2;
+    int intPart = static_cast<int>(result);
+
+
+    if (result >= 1 || result <= -1) {
+        string exBin = decBin(intPart);
+        string exponent = decBin(exBin.size() + 4);
+
+        while (exponent.size() < 3) exponent.insert(0, "0");
+
+        string mantissa = exBin + dec_frac_bin(result - intPart);
+        while (mantissa.size() < 4) mantissa += "0";
+
+        string binaryResult = (result < 0 ? '1' : '0') + exponent + mantissa;
+        reg.setcell(idx1, bin_dec(binaryResult));
+            cout <<  bin_dec(binaryResult) << endl ;
+
+    } else {
+        string mantissa = dec_frac_bin(fabs(result));
+        while (mantissa.size() < 4) mantissa += "0";
+        string ex = decBin(0 + 4);
+        string binaryResult = (result < 0 ? '1' : '0') + ex + mantissa;
+        reg.setcell(idx1, bin_dec(binaryResult));
+    }
+}
+
+string dec_frac_bin(double num) {
+    if (num == 0) return "0";
+
+    string result = ""; 
+    
+    while (num > 0) {
+        num *= 2;
+        int bit = (int)num; 
+        result += to_string(bit); 
+        num -= bit; 
+    }
+
+    return result;
+}
+
+double bin_frac_dec(const string& binary) {
+
+    size_t point = binary.find('.');
+    double dec = 0.0;   
+    if (point != string::npos) {
+        for (size_t i = 0; i < point; ++i) {
+            if (binary[i] == '1') dec += pow(2, point - i - 1);
+            
+        }
+  
+        for (size_t i = point + 1; i < binary.size(); ++i) {
+            if (binary[i] == '1') dec += 1.0 / pow(2, i - point);
+        }
+    } else {
+        for (size_t i = 0; i < binary.size(); ++i) {
+            if (binary[i] == '1') {
+                dec += pow(2, binary.size() - i - 1);
+            }
+        }
+    }
+    return dec;
+}
+
+string dec_bin(int decimal) {
+    const int bits = 8 ;  
+    bitset<bits> binary(decimal);  
+    return binary.to_string();       
+}
+
+int bin_dec(string& binary) {
+    int decimal = 0;
+    int length = binary.length();   
+    for (int i = 0; i < length; ++i) {
+        if (binary[length - i - 1] == '1') {
+            decimal += pow(2, i);
+        }
+    }
+    return decimal;
+}
+
+string decBin(int decimal) {
+    if (decimal == 0) return "0";
+
+    string binary = "";
+    while (decimal > 0) {
+        binary = (decimal % 2 == 0 ? "0" : "1") + binary;
+        decimal /= 2;
+    }
+    return binary;
+}
+
