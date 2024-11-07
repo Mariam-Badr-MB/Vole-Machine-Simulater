@@ -60,8 +60,10 @@ string comp_2(string s)
 
 bool comparison(int R_idx, Register r)
 {
-    string bin1 = hex_binary(R_idx, r);
-    string bin2 = hex_binary(0, r);
+    int dec1 = r.getcell(R_idx);
+    int dec2 = r.getcell(0);
+    string bin1 = dec_bin(dec1);
+    string bin2 = dec_bin(dec2);
 
     string bin1_2sComp = comp_2(bin1);
     string bin2_2sComp = comp_2(bin2);
@@ -76,10 +78,9 @@ bool comparison(int R_idx, Register r)
     {
         if (bin1_2sComp > bin2_2sComp)
             return true;
-        else if (bin1_2sComp < bin2_2sComp)
-            return false;
-        else
-            cout<<"Registers are Equal.\n";
+       else{
+           return false;
+       }
     }
 }
 
