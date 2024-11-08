@@ -378,7 +378,9 @@ void CPU::jump(int R, int XY, Register& reg, int& PC) {
         for (int i=0; i<iterations; i++){
             runNextStep();
         }
+        PC = jump_idx ;
     }
+    
 }
 
 void CPU::decode() {
