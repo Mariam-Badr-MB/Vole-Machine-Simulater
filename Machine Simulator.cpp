@@ -291,7 +291,8 @@ CPU::CPU(Memory& mem, Register& reg) : memory(mem), reg(reg) {}
     }
 
 void CPU::comparison( Register r, int R_idx,int XY) {
-    int jump_idx = PC;
+   int jump_idx = PC;
+    //cout<<"jumpidx"<<jump_idx<<endl;
     bool jump = false;
     int dec1 = r.getcell(R_idx);
     int dec2 = r.getcell(0);
@@ -309,37 +310,65 @@ void CPU::comparison( Register r, int R_idx,int XY) {
 
     string bin1_2sComp = cu.comp_2(bin1);
     string bin2_2sComp = cu.comp_2(bin2);
+    cout<<"C"<<bin1_2sComp<<endl;
+    cout<<"C"<<bin2_2sComp<<endl;
 
-    if((bin1_2sComp[0] == '1') && (bin2_2sComp[0] == '0')){
+    if((bin1_2sComp[0] == '1') && (bin2_2sComp[0] == '0'))
+    {
 
-    }else if((bin1_2sComp[0] == '0') && (bin2_2sComp[0] == '1'))
-        PC = XY, PC -= 2, jump = true;
+    }
 
-    else{
-        if((bin1_2sComp[0] == '0') && (bin2_2sComp[0] == '0')){
-            for(int j=0; j<8; j++){
-                if(bin1_2sComp[j]>bin2_2sComp[j]){
-                    PC = XY, PC -= 2, jump = true;
+    else if((bin1_2sComp[0] == '0') && (bin2_2sComp[0] == '1'))
+        PC = XY, jump = true;
+
+    else
+    {
+        if((bin1_2sComp[0] == '0') && (bin2_2sComp[0] == '0'))
+        {
+            for(int j=0; j<8; j++)
+            {
+                if(bin1_2sComp[j]>bin2_2sComp[j])
+                {
+                    PC = XY, jump = true;
                     break;
                 }
+                else
+                {
+                    cout<<"no use +ve\n";
+                }
             }
-        }else if((bin1_2sComp[0] == '1') && (bin2_2sComp[0] == '1')){
-            for(int j=0; j<8; j++){
-                if(bin1_2sComp[j]<bin2_2sComp[j]){
-                    PC = XY, PC -= 2, jump = true;
+        }
+        else if((bin1_2sComp[0] == '1') && (bin2_2sComp[0] == '1'))
+        {
+            for(int j=0; j<8; j++)
+            {
+                if(bin1_2sComp[j]<bin2_2sComp[j])
+                {
+                    PC = XY, jump = true;
                     break;
+
+                }
+                else
+                {
+                    cout<<"no use -ve\n";
+                    cout<<j<<endl;
+
 
                 }
             }
         }
     }
-    
-    if(jump){
-        int iterations = ((jump_idx+2 - XY)/2) + 1;
-        for (int i=0; i<iterations; i++){
+    cout<<"PC"<<PC<<endl;
+    if(jump)
+    {
+        int iterations = ((jump_idx - XY)/2) + 1;
+        cout<<iterations<<endl;
+        for (int i=0; i<iterations; i++)
+        {
             runNextStep();
         }
     }
+    PC = jump_idx ;
 }
 void CPU::jump(int R, int XY, Register& reg, int& PC) {
     if(reg.getcell(R)==reg.getcell(0)) {
